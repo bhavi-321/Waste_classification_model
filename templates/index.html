@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Waste Classifier</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; color: #333; }
+        .container { background-color: #ffffff; padding: 30px 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: inline-block; }
+        h1 { font-size: 2em; color: #2c3e50; }
+        .result { margin-top: 30px; font-size: 1.3em; color: #0056b3; }
+        img { max-width: 300px; margin-top: 20px; border: 3px solid #e7e7e7; border-radius: 8px; }
+        button { background-color: #007bff; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; transition: background-color 0.2s; }
+        button:hover { background-color: #0056b3; }
+        input[type="file"] { margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Automated Waste Classifier</h1>
+        <p>Upload an image of a waste item to classify it.</p>
+        <form action="/predict" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" required>
+            <button type="submit">Classify</button>
+        </form>
+
+        {% if prediction %}
+            <div class="result">
+                <h2>{{ prediction }}</h2>
+                <h3>{{ confidence }}</h3>
+                <img src="{{ uploaded_image }}" alt="Uploaded Image">
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
