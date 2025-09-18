@@ -1,4 +1,5 @@
 import os
+import requests
 import tensorflow as tf
 from flask import Flask, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
@@ -6,9 +7,20 @@ from werkzeug.utils import secure_filename
 # Initialize the Flask application
 app = Flask(__name__)
 
-# --- Load the Clean, Compatible .h5 Model ---
-# This model was saved with save_format='h5' for maximum compatibility.
-MODEL_PATH = 'waste_classifier_final_5.h5'
+# --- Google Drive Model Download Setup ---
+MODEL_PATH = "waste_classifier_final_5.h5"
+# Replace with your own Google Drive file ID 👇
+MODEL_URL = "https://drive.google.com/uc?export=download&id=1-ijjwQVdjE2y76ZJl8zgJUpciQ0mKMTV"
+
+# Download model if not already present
+if not os.path.exists(MODEL_PATH):
+    print("Downloading model from Google Drive...")
+    r = requests.get(MODEL_URL)
+    with open(MODEL_PATH, "wb") as f:
+        f.write(r.content)
+    print("Download complete!")
+
+# Load the model
 try:
     model = tf.keras.models.load_model(MODEL_PATH)
     print("Image classification model loaded successfully!")
@@ -26,7 +38,7 @@ def preprocess_image(image_path):
     """
     img = tf.keras.preprocessing.image.load_img(image_path, target_size=(224, 224))
     img_array = tf.keras.preprocessing.image.img_to_array(img)
-    img_array = tf.expand_dims(img_array, 0) # Create a batch of one
+    img_array = tf.expand_dims(img_array, 0)  # Create a batch of one
     # Apply the MobileNetV2-specific preprocessing
     return tf.keras.applications.mobilenet_v2.preprocess_input(img_array)
 
